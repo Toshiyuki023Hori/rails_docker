@@ -1,4 +1,6 @@
-FROM ruby:3.0.4
+FROM ruby:2.7.6
+# rubyのversionはdockerのofficial imageに合わせて
+# Gemfileを用意するのを忘れずに
 
 ENV LANG=C.UTF-8 \
   TZ=Asia/Tokyo
@@ -9,7 +11,7 @@ RUN mkdir /rails_app
 # 作成したroot dirをworking directry として指定
 WORKDIR /rails_app
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
-# ローカルのyGemfileをコンテナ内にコピー
+# ローカルのGemfileをコンテナ内にコピー
 COPY Gemfile /rails_app/Gemfile
 COPY Gemfile.lock /rails_app/Gemfile.lock
 RUN gem install bundler:1.7.3 && bundle install

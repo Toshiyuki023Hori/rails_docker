@@ -2,25 +2,24 @@
 
 ### Set UP
 
-1. Clone this repository
-2. (if you want to create your env from scratch using this repo) run `docker-compose run api rails new . --api --database=postgresql`
-3. `docker-compose up -d`
+1. Clone this template repository
+2. Create `.env` file and write your enviromental variables
+3. Create `Gemfile.lock`. You don't have to anything, keep empty.
+4. Run `docker-compose run api rails new . --api --database=postgresql`
+5. `docker-compose up -d`
 
 ### Explanation about Setup Command
 
 - `docker-compose run api rails new . --api --database=postgresql`
-  At this time, we will use `Gemfile` set up by me so I don't use the `--force` option on set up command
+  At this time, we will use `Gemfile` set up manually by me so I don't use the `--force` option on set up command
+  If you use other gems, you have to edit `Gemfile`.
+  NOTE: **DO NOT FORGET type NO When you are asked overwrite `Gemfile` or not**
 
 ### Attention while developing
 
 - `bundle install`
   Since we manage `gem` files in volumes to continuously keep them, we have to use `docker-compose run` when we install gem with bundler.
   The reason why is `docker-compose build` doesn't connect gem files to volumes.
-
-- Server Starting
-  As this app uses 'ruby-debug-ide', we have to do oneaction after `docker-compose up -d`.
-  Push Command + Shift + P(if you use Visual Studio Code) and select `Debug: Start Debugging`
-  Then, server is staring and you can debug wherever you want to stop.
 
 - Annotating routes
   When you want to see the list of URLs, you can run `bundle exec rake annotate_routes`
