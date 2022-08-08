@@ -22,28 +22,55 @@
 
 ### Attention while developing
 
-- `bundle install`
+- `bundle install`  
   Since we manage `gem` files in volumes to continuously keep them, we have to use `docker-compose run` when we install gem with bundler.
   The reason why is `docker-compose build` doesn't connect gem files to volumes.
 
-- Annotating routes
+- Annotating routes  
   When you want to see the list of URLs, you can run `bundle exec rake annotate_routes`
 
-- Editing codes
+- Editing codes  
   If you are already familiar with Rails Project, you will be surprisided at the behavior that any changes aren't reloaded.
   For coding faster, you can add this code in `config/environments/development.rb`
-  ```
-        config.file_watcher = ActiveSupport::FileUpdateChecker
+  ```rb
+  config.file_watcher = ActiveSupport::FileUpdateChecker
   ```
   When you develop rails with docker, you have to restart container every time you change file such as controllers, but the above code senses change and they will be reloaded
 
-* Configuration
+### Configuration
+- how to set up`redis`  
+  1. install `redis` and `rails-redis`, which are already written in `Gemfile` but you can specify versions of them if you like.
+  2. Since cache is disable in development env by default, you must run `docker-compose run --rm api rails dev:cache`
+  3. Create `config/initializers/redis.rb` and add below codes.
+    ```rb
+    Redis.current = Redis.new
+    ```
+  4. Edit `config/environments/development.rb`, add some codes and comment out existing codes for cache.
+    ```rb
+    # Enable/disable caching. By default caching is disabled.
+    # Run rails dev:cache to toggle caching.
+    # redis 利用のためコメントアウト
+    # if Rails.root.join('tmp', 'caching-dev.txt').exist?
+    #   config.cache_store = :memory_store
+    #   config.public_file_server.headers = {
+    #     'Cache-Control' => "public, max-age=#{2.days.to_i}"
+    #   }
+    # else
+    #   config.action_controller.perform_caching = false
+    #
+    #   config.cache_store = :null_store
+    # end
 
-* Database creation
+    config.cache_store = :redis_store, "redis://redis:6379/0/cache"
+    config.active_record.cache_versioning = false
+
+    ```
+
+### Database creation  
 **DO NOT FORGET EDIT `database.yml` after initializing your rails app**
 Here is the codes for `database.yml`
 
-```database.yml
+```yml
 # PostgreSQL. Versions 9.3 and up are supported.
 #
 # Install the pg driver:
