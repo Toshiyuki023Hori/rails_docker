@@ -6,7 +6,8 @@
 2. Create `.env` file and write your enviromental variables
 3. Create `Gemfile.lock`. You don't have to anything, keep empty.
 4. Run `docker-compose run api rails new . --api --database=postgresql`
-5. `docker-compose up -d`
+5. After making rails files, edit `database.yml` like below: See `Database Creation`
+6. `docker-compose up -d`
 
 ### Explanation about Setup Command
 
@@ -14,6 +15,10 @@
   At this time, we will use `Gemfile` set up manually by me so I don't use the `--force` option on set up command
   If you use other gems, you have to edit `Gemfile`.
   NOTE: **DO NOT FORGET type NO When you are asked overwrite `Gemfile` or not**
+
+- Why using `Dockerfile_DB`?
+  `docker-compose run` means commands are run inside a container and so you might face some permission problems.
+  In this case, `docker-compose run api rails new . --api --database=postgresql` cannot make a container run `00_create.sh`. You have to change permissions of the file when the container builds and `Dockerfile_DB` is necessary.
 
 ### Attention while developing
 
@@ -32,13 +37,73 @@
   ```
   When you develop rails with docker, you have to restart container every time you change file such as controllers, but the above code senses change and they will be reloaded
 
+* Configuration
+
+* Database creation
+**DO NOT FORGET EDIT `database.yml` after initializing your rails app**
+Here is the codes for `database.yml`
+
+```database.yml
+# PostgreSQL. Versions 9.3 and up are supported.
+#
+# Install the pg driver:
+#   gem install pg
+# On macOS with Homebrew:
+#   gem install pg -- --with-pg-config=/usr/local/bin/pg_config
+# On macOS with MacPorts:
+#   gem install pg -- --with-pg-config=/opt/local/lib/postgresql84/bin/pg_config
+# On Windows:
+#   gem install pg
+#       Choose the win32 build.
+#       Install PostgreSQL and put its /bin directory on your path.
+#
+# Configure Using Gemfile
+# gem 'pg'
+#
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # https://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: db
+  username: <%= ENV.fetch("DB_USER") %>
+  password: <%= ENV.fetch("DB_PASSWORD") %>
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("DB_dev") %>
+
+
+~~~  SKIP  ~~~
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  database: <%= ENV.fetch("DB_test") %>
+
+
+~~~  SKIP  ~~~
+
+
+#   production:
+#     url: <%= ENV['MY_APP_DATABASE_URL'] %>
+#
+# Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
+# for a full overview on how database connection configuration can be specified.
+#
+production:
+  <<: *default
+  database: <%= ENV.fetch("DB_production") %>
+
+```
+
 * Ruby version
 
 * System dependencies
 
-* Configuration
-
-* Database creation
 
 * Database initialization
 
