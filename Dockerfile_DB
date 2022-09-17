@@ -1,3 +1,4 @@
 FROM postgres
 COPY ./docker-entrypoint-initdb.d/00_create.sh /docker-entrypoint-initdb.d/
 RUN chmod u+x /docker-entrypoint-initdb.d/*.sh
+RUN chmod a+x /bin/bash
