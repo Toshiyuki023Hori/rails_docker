@@ -14,7 +14,7 @@ RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
 # ローカルのGemfileをコンテナ内にコピー
 COPY Gemfile /rails_app/Gemfile
 COPY Gemfile.lock /rails_app/Gemfile.lock
-RUN gem install bundler:1.7.3 && bundle install
+RUN gem install bundler && bundle install
 
 # Add a script to be executed every time the container starts.
 COPY entrypoint.sh /usr/bin/
