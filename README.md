@@ -11,14 +11,19 @@
 
 ### Explanation about Setup Command
 
-- `docker-compose run api rails new . --api --database=postgresql`
+- `docker-compose run api rails new . --api --database=postgresql`  
   At this time, we will use `Gemfile` set up manually by me so I don't use the `--force` option on set up command
   If you use other gems, you have to edit `Gemfile`.
   NOTE: **DO NOT FORGET type NO When you are asked overwrite `Gemfile` or not**
 
-- Why using `Dockerfile_DB`?
+- Why using `Dockerfile_DB`?  
   `docker-compose run` means commands are run inside a container and so you might face some permission problems.
   In this case, `docker-compose run api rails new . --api --database=postgresql` cannot make a container run `00_create.sh`. You have to change permissions of the file when the container builds and `Dockerfile_DB` is necessary.
+  ```
+  ATTENTION!!
+  I am facing this issue still.
+  Although we cannot create tables and an user when building but you can do that by entering DB container because you already have permitted 00_create.sh file.  
+  ```
 
 ### Attention while developing
 
@@ -36,6 +41,14 @@
   config.file_watcher = ActiveSupport::FileUpdateChecker
   ```
   When you develop rails with docker, you have to restart container every time you change file such as controllers, but the above code senses change and they will be reloaded
+
+- `Ruby`'s environmental variables  
+  - `GEM_HOME`
+    When you run `gem install`, the gem is gonna be installd in `GEM_HOME` directory.
+  - `BUNDLE_PATH`
+    When you run `bundle install`, the gem is gonna be installd in `BUNDLE_PATH` directory.
+  - `BUNDLE_BIN`
+    If you use `rspec`, this is a kind of *executable file*. the bundler set executable files in `BUNDLE_BIN`.
 
 ### Configuration
 - how to set up`redis`  
